@@ -133,7 +133,7 @@ async function handleGeoIp(req, res) {
   if (isPrivateIp(ip)) {
     sendJson(res, 422, {
       error: 'No public client IP was forwarded to the widget server.',
-      hint: 'Configure the reverse proxy to pass X-Forwarded-For, or use browser geolocation.'
+      hint: 'Use browser geolocation or pass fixed coordinates with ?lat=...&lon=....'
     });
     return;
   }
@@ -294,18 +294,19 @@ async function serveStatic(req, res, requestUrl) {
 
 const server = createServer(async (req, res) => {
   const requestUrl = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`);
+  const pathname = requestUrl.pathname;
 
-  if (requestUrl.pathname === '/healthz') {
+  if (pathname === '/healthz') {
     sendJson(res, 200, { ok: true });
     return;
   }
 
-  if (requestUrl.pathname === '/api/geoip') {
+  if (pathname === '/api/geoip') {
     await handleGeoIp(req, res);
     return;
   }
 
-  if (requestUrl.pathname === '/api/dashdot/summary') {
+  if (pathname === '/api/dashdot/summary') {
     await handleDashdotSummary(res);
     return;
   }
@@ -316,6 +317,7 @@ const server = createServer(async (req, res) => {
 server.listen(port, () => {
   console.log(`${logPrefix} listening on 0.0.0.0:${port}`);
   console.log(`${logPrefix} internal URLs:`);
+  console.log(`  http://homarr-iframes:${port}/ping/`);
   console.log(`  http://homarr-iframes:${port}/debug/`);
   console.log(`  http://homarr-iframes:${port}/widgets/dashdot/`);
   console.log(`  http://homarr-iframes:${port}/widgets/daylight/`);

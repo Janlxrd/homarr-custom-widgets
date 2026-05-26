@@ -7,13 +7,14 @@
     <style>
       :root {
         color-scheme: dark;
-        --bg: #101217;
-        --panel: #1f2229;
-        --line: #343946;
+        --bg: #050914;
+        --panel: #141923;
+        --line: #59647a;
         --text: #e8edf5;
         --muted: #a9b2c0;
         --ok: #48d17d;
         --bad: #ff637d;
+        --warn: #ffd166;
       }
 
       * {
@@ -23,7 +24,11 @@
       body {
         margin: 0;
         padding: 24px;
-        background: var(--bg);
+        min-height: 100vh;
+        background:
+          linear-gradient(135deg, rgba(255, 209, 102, 0.16), transparent 32%),
+          linear-gradient(315deg, rgba(72, 209, 125, 0.12), transparent 36%),
+          var(--bg);
         color: var(--text);
         font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       }
@@ -40,7 +45,7 @@
       }
 
       h1 {
-        font-size: 30px;
+        font-size: clamp(22px, 7vw, 34px);
         line-height: 1;
       }
 
@@ -52,7 +57,18 @@
         border: 1px solid var(--line);
         border-radius: 8px;
         padding: 14px;
-        background: var(--panel);
+        background: rgba(20, 25, 35, 0.94);
+      }
+
+      .loaded {
+        border-color: var(--warn);
+        background: rgba(255, 209, 102, 0.12);
+      }
+
+      .loaded strong {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--warn);
       }
 
       .row {
@@ -94,11 +110,16 @@
     <main>
       <header>
         <h1>Homarr iFrames Debug</h1>
-        <p>Open this from the same URL style you use in Homarr.</p>
+        <p>Open this from the exact URL style you use in Homarr.</p>
       </header>
+      <section class="card loaded">
+        <strong>DEBUG HTML LOADED</strong>
+        <p>If you can read this line inside Homarr, the iframe document rendered. If the rows below stay empty, JavaScript failed and the browser console will show the reason.</p>
+      </section>
       <section id="rows" class="card"></section>
       <section class="card">
         <p>Expected internal URL: <code>http://homarr-iframes:8080/debug/</code></p>
+        <p>No-JavaScript iframe test: <code>http://homarr-iframes:8080/ping/</code></p>
       </section>
     </main>
   </body>

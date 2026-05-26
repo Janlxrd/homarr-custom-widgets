@@ -10,6 +10,7 @@ const locale = params.get('locale') || undefined;
 const requestedTimezone = params.get('tz');
 const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
 const timezone = requestedTimezone || browserTimezone;
+const logPrefix = '[homarr-iframes:daylight]';
 
 const state = {
   coords: null,
@@ -37,6 +38,21 @@ const elements = {
   sunsetValue: document.querySelector('#sunsetValue'),
   statusText: document.querySelector('#statusText')
 };
+
+console.info(`${logPrefix} loaded`, {
+  origin: window.location.origin,
+  pathname: window.location.pathname,
+  search: window.location.search,
+  timezone
+});
+
+window.addEventListener('error', (event) => {
+  console.error(`${logPrefix} JavaScript error`, event.error || event.message);
+});
+
+window.addEventListener('unhandledrejection', (event) => {
+  console.error(`${logPrefix} Unhandled promise rejection`, event.reason);
+});
 
 if (params.get('chrome') === '0') {
   document.body.classList.add('no-chrome');

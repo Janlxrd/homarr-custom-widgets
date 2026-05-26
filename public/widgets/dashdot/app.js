@@ -25,6 +25,21 @@ const elements = {
   statusText: document.querySelector('#statusText')
 };
 
+console.info(`${logPrefix} loaded`, {
+  origin: window.location.origin,
+  pathname: window.location.pathname,
+  search: window.location.search,
+  demoMode
+});
+
+window.addEventListener('error', (event) => {
+  console.error(`${logPrefix} JavaScript error`, event.error || event.message);
+});
+
+window.addEventListener('unhandledrejection', (event) => {
+  console.error(`${logPrefix} Unhandled promise rejection`, event.reason);
+});
+
 if (params.get('bg') === 'solid') {
   document.body.classList.add('solid-bg');
 }

@@ -2,14 +2,39 @@ const rows = document.querySelector('#rows');
 const origin = window.location.origin;
 const logPrefix = '[homarr-iframes:debug]';
 
-console.info(`${logPrefix} loaded`, { origin });
+window.addEventListener('error', (event) => {
+  add('JavaScript error', event.message || 'Unknown script error', false);
+  console.error(`${logPrefix} JavaScript error`, event.error || event.message);
+});
 
-add('Current origin', origin, true);
-add('Dashdot widget URL', `${origin}/widgets/dashdot/`, true);
-add('Daylight widget URL', `${origin}/widgets/daylight/`, true);
+window.addEventListener('unhandledrejection', (event) => {
+  const reason = event.reason instanceof Error ? event.reason.message : String(event.reason);
+  add('Unhandled promise rejection', reason, false);
+  console.error(`${logPrefix} Unhandled promise rejection`, event.reason);
+});
 
-await check('Health endpoint', '/healthz');
-await check('Dashdot summary endpoint', '/api/dashdot/summary');
+run().catch((error) => {
+  add('Debug script failed', error instanceof Error ? error.message : String(error), false);
+  console.error(`${logPrefix} Debug script failed`, error);
+});
+
+async function run() {
+  console.info(`${logPrefix} loaded`, {
+    origin,
+    pathname: window.location.pathname,
+    search: window.location.search
+  });
+
+  add('JavaScript loaded', 'yes', true);
+  add('Current origin', origin, true);
+  add('Ping URL', `${origin}/ping/`, true);
+  add('Dashdot widget URL', `${origin}/widgets/dashdot/`, true);
+  add('Daylight widget URL', `${origin}/widgets/daylight/`, true);
+
+  await check('No-JS ping page', '/ping/');
+  await check('Health endpoint', '/healthz');
+  await check('Dashdot summary endpoint', '/api/dashdot/summary');
+}
 
 async function check(label, url) {
   try {

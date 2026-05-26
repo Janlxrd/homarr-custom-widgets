@@ -6,6 +6,8 @@ Custom iframe widgets for Homarr, built as a small internal Docker service.
 
 - `GET /widgets/daylight/` - local-time sunrise, sunset, and day-progress widget.
 - `GET /widgets/dashdot/` - custom Dashdot server summary widget.
+- `GET /ping/` - no-JavaScript iframe render test.
+- `GET /debug/` - iframe and API diagnostics.
 - `GET /showcase/` - local iframe preview page for testing widget sizes.
 
 ## Docker
@@ -37,18 +39,30 @@ http://dashdot:3001
 
 ## Homarr iFrame URLs
 
-Use the internal widget URL only if the browser viewing Homarr can resolve and
-reach the hostname:
+Use these direct internal URLs in Homarr:
 
 ```text
+http://homarr-iframes:8080/ping/
+http://homarr-iframes:8080/debug/
 http://homarr-iframes:8080/widgets/daylight/
 http://homarr-iframes:8080/widgets/dashdot/
-http://homarr-iframes:8080/debug/
 ```
 
-If the browser cannot resolve Docker service names, route the widget service
-through your existing internal Homarr/reverse-proxy path without publishing it
-publicly.
+This project is configured for direct internal service URLs. It does not use a
+base path or path rewrite.
+
+If Homarr shows a blank iframe, test in this order:
+
+```text
+http://homarr-iframes:8080/ping/
+http://homarr-iframes:8080/debug/
+http://homarr-iframes:8080/widgets/dashdot/?demo=1
+http://homarr-iframes:8080/widgets/dashdot/?debug=1
+```
+
+`/ping/` uses no JavaScript. If that is blank inside Homarr, the iframe page
+is not being rendered by Homarr/the browser. If `/ping/` shows but `/debug/`
+does not, check the browser console for script or content-security errors.
 
 ## Local Development
 
