@@ -1,0 +1,238 @@
+:root {
+  color-scheme: dark;
+  --text: #d7dde7;
+  --muted: #a7b0be;
+  --edge: rgba(120, 130, 145, 0.22);
+  --panel: rgba(16, 18, 22, 0.62);
+  --blue: #256fd1;
+  --red: #e83d65;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+body {
+  position: relative;
+  background: transparent;
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.scale-root {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--widget-base-width, 574px);
+  height: var(--widget-base-height, 574px);
+  transform: translate(-50%, -50%) scale(var(--widget-scale, 1));
+  transform-origin: center;
+}
+
+.widget {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: clamp(16px, 4vh, 26px);
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: clamp(18px, 4.4vw, 24px);
+  overflow: hidden;
+  border: 1px solid var(--edge);
+  border-radius: 22px;
+  background: transparent;
+}
+
+.solid-bg .widget {
+  background: rgba(35, 37, 43, 0.94);
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+h1 {
+  margin-bottom: clamp(18px, 3vh, 24px);
+  color: var(--text);
+  font-size: clamp(26px, 6vw, 36px);
+  font-weight: 780;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.summary {
+  min-width: 0;
+}
+
+.metric-row {
+  display: grid;
+  grid-template-columns: minmax(110px, 1fr) auto;
+  gap: 16px;
+  align-items: start;
+}
+
+.metric-row + .metric-row {
+  margin-top: clamp(22px, 4vh, 30px);
+}
+
+h2 {
+  color: var(--text);
+  font-size: clamp(20px, 4.2vw, 25px);
+  font-weight: 750;
+  letter-spacing: 0;
+  line-height: 1.1;
+}
+
+.metric-values {
+  display: grid;
+  gap: 6px;
+  justify-items: end;
+  color: var(--muted);
+  font-size: clamp(16px, 3vw, 18px);
+  line-height: 1.2;
+  text-align: right;
+}
+
+.metric-values strong {
+  color: var(--muted);
+  font-size: inherit;
+  font-weight: 500;
+}
+
+.graphs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(14px, 3vw, 18px);
+  min-height: 0;
+}
+
+.graph-card {
+  position: relative;
+  min-width: 0;
+  min-height: 110px;
+  overflow: hidden;
+  border-radius: 24px;
+  background: rgba(14, 16, 20, 0.78);
+}
+
+.graph-card h3 {
+  position: relative;
+  z-index: 2;
+  padding: 22px 24px 0;
+  color: #cfd8e8;
+  font-size: clamp(17px, 3.3vw, 20px);
+  font-weight: 720;
+  letter-spacing: 0;
+  line-height: 1.2;
+}
+
+#cpuGraph {
+  position: absolute;
+  inset: 48px 0 0;
+  width: 100%;
+  height: calc(100% - 48px);
+}
+
+#cpuLine {
+  fill: none;
+  stroke: var(--blue);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 5;
+  filter: drop-shadow(0 0 8px rgba(37, 111, 209, 0.4));
+}
+
+.ram::before {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 0%;
+  content: "";
+  background: linear-gradient(180deg, rgba(232, 61, 101, 0.26), rgba(232, 61, 101, 0.03));
+  transition: height 240ms ease;
+}
+
+.ram-fill {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 0%;
+  border-top: 4px solid var(--red);
+  background: linear-gradient(180deg, rgba(232, 61, 101, 0.24), rgba(232, 61, 101, 0.03));
+  filter: drop-shadow(0 0 8px rgba(232, 61, 101, 0.36));
+  transition: bottom 240ms ease;
+}
+
+.status {
+  display: none;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.debug .status {
+  display: block;
+}
+
+@media (max-width: 460px), (max-height: 310px) {
+  .widget {
+    gap: 12px;
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  h1 {
+    margin-bottom: 14px;
+    font-size: 26px;
+  }
+
+  .metric-row + .metric-row {
+    margin-top: 16px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  .metric-values {
+    font-size: 15px;
+  }
+
+  .graphs {
+    gap: 12px;
+  }
+
+  .graph-card {
+    border-radius: 18px;
+    min-height: 92px;
+  }
+
+  .graph-card h3 {
+    padding: 16px 16px 0;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 380px) {
+  .graphs {
+    grid-template-columns: 1fr;
+  }
+
+  .graph-card {
+    min-height: 78px;
+  }
+}

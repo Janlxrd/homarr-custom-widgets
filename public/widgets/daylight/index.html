@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daylight Widget</title>
+    <link rel="stylesheet" href="./styles.css">
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <main class="widget" aria-live="polite">
+      <header class="topbar">
+        <div class="place">
+          <div class="place-row">
+            <svg class="pin" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 21s7-6.1 7-12A7 7 0 0 0 5 9c0 5.9 7 12 7 12Z"></path>
+              <circle cx="12" cy="9" r="2.4"></circle>
+            </svg>
+            <span id="locationLabel">Detecting location</span>
+          </div>
+          <span id="timezoneLabel">Local timezone</span>
+        </div>
+        <div class="actions">
+          <button id="refreshButton" class="icon-button" type="button" title="Refresh">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 12a8 8 0 0 1-14.7 4.4M4 12A8 8 0 0 1 18.7 7.6"></path>
+              <path d="M18.7 3.8v3.8h-3.8M5.3 20.2v-3.8h3.8"></path>
+            </svg>
+            <span class="sr-only">Refresh</span>
+          </button>
+          <button id="preciseButton" class="icon-button" type="button" title="Use precise location">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M12 2v3M12 19v3M2 12h3M19 12h3"></path>
+              <path d="M4.9 4.9 7 7M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"></path>
+            </svg>
+            <span class="sr-only">Use precise location</span>
+          </button>
+        </div>
+      </header>
+
+      <section class="clock" aria-label="Current time">
+        <div class="mode">
+          <span class="sun-mark" aria-hidden="true"></span>
+          <span id="modeLabel">Daylight</span>
+        </div>
+        <div id="timeValue" class="time">--:--</div>
+        <div id="dateValue" class="date">Loading</div>
+      </section>
+
+      <section class="sky" aria-label="Day timeline">
+        <div class="timeline-labels" aria-hidden="true">
+          <span>00:00</span>
+          <span>12:00</span>
+          <span>24:00</span>
+        </div>
+        <div class="timeline" aria-hidden="true">
+          <span id="daylightWindow" class="daylight-window"></span>
+          <span id="barFill" class="elapsed-line"></span>
+          <span id="sunriseMarker" class="sun-event sunrise-event">
+            <span class="event-dot"></span>
+            <span class="event-label">Sunrise</span>
+          </span>
+          <span id="sunsetMarker" class="sun-event sunset-event">
+            <span class="event-dot"></span>
+            <span class="event-label">Sunset</span>
+          </span>
+          <span id="sunDot" class="current-dot"></span>
+          <span id="progressValue" class="timeline-info">--% day passed</span>
+        </div>
+      </section>
+
+      <section class="stats" aria-label="Sun times">
+        <div class="stat">
+          <span class="stat-label">Sunrise</span>
+          <strong id="sunriseValue">--:--</strong>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Daylight</span>
+          <strong id="durationValue">--</strong>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Sunset</span>
+          <strong id="sunsetValue">--:--</strong>
+        </div>
+      </section>
+
+      <p id="statusText" class="status">Starting widget</p>
+    </main>
+  </body>
+</html>

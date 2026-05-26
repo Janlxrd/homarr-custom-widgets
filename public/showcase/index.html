@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Homarr iFrame Showcase</title>
+    <link rel="stylesheet" href="./styles.css">
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <main class="showcase">
+      <header class="shell-header">
+        <div>
+          <h1>iFrame Showcase</h1>
+          <p>Homarr-style translucent cards with the live daylight widget embedded.</p>
+        </div>
+        <a class="open-widget" href="/widgets/daylight/?lat=48.1486&lon=17.1077&label=Bratislava&seconds=0" target="_blank" rel="noreferrer">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 17 17 7"></path>
+            <path d="M8 7h9v9"></path>
+          </svg>
+          Widget
+        </a>
+      </header>
+
+      <section class="controls" aria-label="Preview controls">
+        <div class="field">
+          <label for="widthInput">Width</label>
+          <input id="widthInput" type="number" min="280" max="900" step="10" value="480">
+        </div>
+        <div class="field">
+          <label for="heightInput">Height</label>
+          <input id="heightInput" type="number" min="180" max="520" step="10" value="300">
+        </div>
+        <div class="field wide">
+          <label for="locationInput">Label</label>
+          <input id="locationInput" type="text" value="Bratislava" maxlength="40">
+        </div>
+        <label class="toggle">
+          <input id="secondsToggle" type="checkbox">
+          <span>Seconds</span>
+        </label>
+        <label class="toggle">
+          <input id="chromeToggle" type="checkbox" checked>
+          <span>Buttons</span>
+        </label>
+        <button id="copyButton" class="copy-button" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="9" y="9" width="11" height="11" rx="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <span id="copyLabel">Copy URL</span>
+        </button>
+      </section>
+
+      <section class="board" aria-label="Homarr preview board">
+        <article class="tile dashdot-tile">
+          <div class="tile-head">
+            <span>Dashdot server iframe</span>
+            <strong>574 x 574</strong>
+          </div>
+          <iframe title="Dashdot server widget preview" src="/widgets/dashdot/?demo=1"></iframe>
+        </article>
+
+        <article class="tile live-tile">
+          <div class="tile-head">
+            <span>Live iframe</span>
+            <strong id="sizeLabel">480 x 300</strong>
+          </div>
+          <div class="iframe-stage">
+            <iframe id="liveFrame" title="Live daylight widget preview"></iframe>
+          </div>
+        </article>
+
+        <article class="tile preset-tile">
+          <div class="tile-head">
+            <span>Compact</span>
+            <strong>360 x 240</strong>
+          </div>
+          <iframe title="Compact daylight widget" data-preset="360x240"></iframe>
+        </article>
+
+        <article class="tile preset-tile wide-preview">
+          <div class="tile-head">
+            <span>Wide</span>
+            <strong>640 x 260</strong>
+          </div>
+          <iframe title="Wide daylight widget" data-preset="640x260"></iframe>
+        </article>
+
+        <article class="tile preset-tile">
+          <div class="tile-head">
+            <span>Square-ish</span>
+            <strong>420 x 360</strong>
+          </div>
+          <iframe title="Square daylight widget" data-preset="420x360"></iframe>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

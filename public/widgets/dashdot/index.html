@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashdot Server Widget</title>
+    <link rel="stylesheet" href="./styles.css">
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <div id="scaleRoot" class="scale-root">
+      <main class="widget" aria-live="polite">
+        <section class="summary">
+          <h1 id="serverName">Main Server</h1>
+
+          <div class="metric-row">
+            <h2>Storage:</h2>
+            <div class="metric-values">
+              <strong id="storagePercent">--</strong>
+              <span id="storageDetail">-- / --</span>
+            </div>
+          </div>
+
+          <div class="metric-row">
+            <h2>Network:</h2>
+            <div class="metric-values">
+              <span id="networkUp">-- ↑</span>
+              <span id="networkDown">-- ↓</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="graphs" aria-label="Server load graphs">
+          <article class="graph-card cpu">
+            <h3 id="cpuLabel">%: --</h3>
+            <svg id="cpuGraph" viewBox="0 0 240 116" preserveAspectRatio="none" aria-hidden="true">
+              <path id="cpuLine" d=""></path>
+            </svg>
+          </article>
+
+          <article class="graph-card ram">
+            <h3 id="ramLabel">%: --</h3>
+            <div id="ramFill" class="ram-fill" aria-hidden="true"></div>
+          </article>
+        </section>
+
+        <p id="statusText" class="status">Loading Dashdot</p>
+      </main>
+    </div>
+  </body>
+</html>
