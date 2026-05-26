@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Homarr iFrames Debug</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #101217;
+        --panel: #1f2229;
+        --line: #343946;
+        --text: #e8edf5;
+        --muted: #a9b2c0;
+        --ok: #48d17d;
+        --bad: #ff637d;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 24px;
+        background: var(--bg);
+        color: var(--text);
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      main {
+        display: grid;
+        gap: 14px;
+        width: min(900px, 100%);
+      }
+
+      h1,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        font-size: 30px;
+        line-height: 1;
+      }
+
+      p {
+        color: var(--muted);
+      }
+
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 14px;
+        background: var(--panel);
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 180px minmax(0, 1fr);
+        gap: 12px;
+        padding: 8px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .row:first-child {
+        border-top: 0;
+      }
+
+      strong {
+        color: var(--text);
+      }
+
+      code {
+        overflow-wrap: anywhere;
+        color: #dce8ff;
+      }
+
+      .ok {
+        color: var(--ok);
+      }
+
+      .bad {
+        color: var(--bad);
+      }
+
+      a {
+        color: #8ab8ff;
+      }
+    </style>
+    <script type="module">
+      const rows = document.querySelector('#rows');
+      const origin = window.location.origin;
+
+      add('Current origin', origin, true);
+      add('Dashdot widget URL', `${origin}/widgets/dashdot/`, true);
+      add('Daylight widget URL', `${origin}/widgets/daylight/`, true);
+
+      await check('Health endpoint', '/healthz');
+      await check('Dashdot summary endpoint', '/api/dashdot/summary');
+
+      async function check(label, url) {
+        try {
+          const response = await fetch(url, { cache: 'no-store' });
+          const text = await response.text();
+          add(label, `${response.status} ${response.statusText}: ${text.slice(0, 500)}`, response.ok);
+        } catch (error) {
+          add(label, error.message, false);
+        }
+      }
+
+      function add(label, value, ok) {
+        const row = document.createElement('div');
+        row.className = 'row';
+        row.innerHTML = `<strong>${label}</strong><code class="${ok ? 'ok' : 'bad'}"></code>`;
+        row.querySelector('code').textContent = value;
+        rows.append(row);
+      }
+    </script>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Homarr iFrames Debug</h1>
+        <p>Open this from the same URL style you use in Homarr.</p>
+      </header>
+      <section id="rows" class="card"></section>
+      <section class="card">
+        <p>Expected internal URL: <code>http://homarr-iframes:8080/debug/</code></p>
+      </section>
+    </main>
+  </body>
+</html>

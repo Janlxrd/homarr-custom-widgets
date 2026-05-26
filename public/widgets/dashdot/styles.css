@@ -188,6 +188,18 @@ h2 {
   display: block;
 }
 
+.has-error .status {
+  display: block;
+  position: absolute;
+  right: 24px;
+  bottom: 18px;
+  left: 24px;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 @media (max-width: 460px), (max-height: 310px) {
   .widget {
     gap: 12px;

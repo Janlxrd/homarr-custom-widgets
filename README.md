@@ -15,7 +15,7 @@ not publish ports externally:
 
 ```yaml
 services:
-  custom-widgets:
+  homarr-iframes:
     build: .
     expose:
       - "8080"
@@ -41,8 +41,9 @@ Use the internal widget URL only if the browser viewing Homarr can resolve and
 reach the hostname:
 
 ```text
-http://custom-widgets:8080/widgets/daylight/
-http://custom-widgets:8080/widgets/dashdot/
+http://homarr-iframes:8080/widgets/daylight/
+http://homarr-iframes:8080/widgets/dashdot/
+http://homarr-iframes:8080/debug/
 ```
 
 If the browser cannot resolve Docker service names, route the widget service

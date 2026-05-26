@@ -1,7 +1,7 @@
 services:
-  custom-widgets:
+  homarr-iframes:
     build: .
-    container_name: homarr-custom-widgets
+    container_name: homarr-iframes
     restart: unless-stopped
     environment:
       PORT: 8080
@@ -11,7 +11,11 @@ services:
     expose:
       - "8080"
     networks:
-      - services
+      services:
+        aliases:
+          - homarr-iframes
+          - custom-widgets
+          - homarr-custom-widgets
 
 networks:
   services:

@@ -73,6 +73,8 @@ async function fetchSummary() {
 }
 
 function render(payload, error = null) {
+  document.body.classList.toggle('has-error', Boolean(error));
+
   const info = payload.info || {};
   const loads = payload.loads || {};
   const storage = normalizeStorage(loads.storage);
