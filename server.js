@@ -12,6 +12,7 @@ const dashdotUrl = (process.env.DASHDOT_URL || 'http://dashdot:3001').replace(/\
 const dashdotTimeoutMs = Number(process.env.DASHDOT_TIMEOUT_MS || 5000);
 const isProduction = process.env.NODE_ENV === 'production';
 const geoCache = new Map();
+const logPrefix = '[homarr-iframes]';
 
 const mimeTypes = new Map([
   ['.html', 'text/html; charset=utf-8'],
@@ -211,6 +212,10 @@ async function handleDashdotSummary(res) {
     const okCount = Object.values(results).filter((result) => result.ok).length;
 
     if (okCount === 0) {
+      console.error(`${logPrefix} Dashdot is unreachable`, {
+        source: dashdotUrl,
+        errors
+      });
       sendJson(res, 502, {
         error: 'Dashdot is unreachable from the widget server.',
         source: dashdotUrl,
@@ -232,7 +237,15 @@ async function handleDashdotSummary(res) {
         network: results.network.data ?? {}
       }
     });
+
+    if (Object.keys(errors).length > 0) {
+      console.warn(`${logPrefix} Dashdot returned partial data`, {
+        source: dashdotUrl,
+        errors
+      });
+    }
   } catch (error) {
+    console.error(`${logPrefix} Dashdot summary lookup failed`, error);
     sendJson(res, 502, {
       error: 'Dashdot summary lookup failed.',
       detail: error instanceof Error ? error.message : String(error)
@@ -301,5 +314,9 @@ const server = createServer(async (req, res) => {
 });
 
 server.listen(port, () => {
-  console.log(`Homarr custom widgets listening on http://localhost:${port}`);
+  console.log(`${logPrefix} listening on 0.0.0.0:${port}`);
+  console.log(`${logPrefix} internal URLs:`);
+  console.log(`  http://homarr-iframes:${port}/debug/`);
+  console.log(`  http://homarr-iframes:${port}/widgets/dashdot/`);
+  console.log(`  http://homarr-iframes:${port}/widgets/daylight/`);
 });

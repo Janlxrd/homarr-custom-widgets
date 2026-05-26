@@ -4,6 +4,7 @@ const historyLimit = clampNumber(params.get('points'), 20, 120, 54);
 const baseWidth = clampNumber(params.get('baseWidth'), 320, 1200, 574);
 const baseHeight = clampNumber(params.get('baseHeight'), 240, 1200, 574);
 const demoMode = params.get('demo') === '1';
+const logPrefix = '[homarr-iframes:dashdot]';
 
 const state = {
   cpuHistory: [],
@@ -59,6 +60,7 @@ async function refresh() {
     state.lastPayload = payload;
     render(payload);
   } catch (error) {
+    console.error(`${logPrefix} Failed to refresh Dashdot summary`, error);
     render(state.lastPayload || demoPayload(), error);
   }
 }
@@ -67,6 +69,11 @@ async function fetchSummary() {
   const response = await fetch('/api/dashdot/summary', { cache: 'no-store' });
   if (!response.ok) {
     const detail = await response.json().catch(() => ({}));
+    console.error(`${logPrefix} /api/dashdot/summary failed`, {
+      status: response.status,
+      statusText: response.statusText,
+      detail
+    });
     throw new Error(detail.error || `Dashdot API returned ${response.status}`);
   }
 
@@ -75,11 +82,16 @@ async function fetchSummary() {
     payload.warning = Object.entries(payload.errors)
       .map(([key, value]) => `${key}: ${value}`)
       .join('; ');
+    console.warn(`${logPrefix} Partial Dashdot data`, payload.errors);
   }
   return payload;
 }
 
 function render(payload, error = null) {
+  if (!payload || typeof payload !== 'object') {
+    console.error(`${logPrefix} Invalid payload`, payload);
+  }
+
   document.body.classList.toggle('has-error', Boolean(error));
 
   const info = payload.info || {};

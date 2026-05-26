@@ -1,5 +1,8 @@
 const rows = document.querySelector('#rows');
 const origin = window.location.origin;
+const logPrefix = '[homarr-iframes:debug]';
+
+console.info(`${logPrefix} loaded`, { origin });
 
 add('Current origin', origin, true);
 add('Dashdot widget URL', `${origin}/widgets/dashdot/`, true);
@@ -13,7 +16,16 @@ async function check(label, url) {
     const response = await fetch(url, { cache: 'no-store' });
     const text = await response.text();
     add(label, `${response.status} ${response.statusText}: ${text.slice(0, 500)}`, response.ok);
+    if (!response.ok) {
+      console.error(`${logPrefix} ${label} failed`, {
+        url,
+        status: response.status,
+        statusText: response.statusText,
+        body: text
+      });
+    }
   } catch (error) {
+    console.error(`${logPrefix} ${label} request failed`, { url, error });
     add(label, error instanceof Error ? error.message : String(error), false);
   }
 }
