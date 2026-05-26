@@ -12,17 +12,30 @@ Custom iframe widgets for Homarr, built as a small internal Docker service.
 
 ## Docker
 
-`docker-compose.yml` keeps the service internal to the Docker network and does
-not publish ports externally:
+`docker-compose.yml` publishes the widget service only on the private host IP
+you set in `.env`:
 
 ```yaml
 services:
   homarr-iframes:
     build: .
-    expose:
-      - "8080"
+    ports:
+      - "${WIDGET_BIND_IP}:8091:8080"
     networks:
       - services
+```
+
+Create `.env` on the VPS:
+
+```bash
+cp .env.example .env
+nano .env
+```
+
+Set `WIDGET_BIND_IP` to the VPS private/LAN/Tailscale IP, for example:
+
+```text
+WIDGET_BIND_IP=192.168.1.50
 ```
 
 Start it with:
@@ -39,25 +52,25 @@ http://dashdot:3001
 
 ## Homarr iFrame URLs
 
-Use these direct internal URLs in Homarr:
+Use the private host IP URLs in Homarr:
 
 ```text
-http://homarr-iframes:8080/ping/
-http://homarr-iframes:8080/debug/
-http://homarr-iframes:8080/widgets/daylight/
-http://homarr-iframes:8080/widgets/dashdot/
+http://192.168.1.50:8091/ping/
+http://192.168.1.50:8091/debug/
+http://192.168.1.50:8091/widgets/daylight/
+http://192.168.1.50:8091/widgets/dashdot/
 ```
 
-This project is configured for direct internal service URLs. It does not use a
-base path or path rewrite.
+Replace `192.168.1.50` with your actual private IP. This project does not use
+a base path or path rewrite.
 
 If Homarr shows a blank iframe, test in this order:
 
 ```text
-http://homarr-iframes:8080/ping/
-http://homarr-iframes:8080/debug/
-http://homarr-iframes:8080/widgets/dashdot/?demo=1
-http://homarr-iframes:8080/widgets/dashdot/?debug=1
+http://192.168.1.50:8091/ping/
+http://192.168.1.50:8091/debug/
+http://192.168.1.50:8091/widgets/dashdot/?demo=1
+http://192.168.1.50:8091/widgets/dashdot/?debug=1
 ```
 
 `/ping/` uses no JavaScript. If that is blank inside Homarr, the iframe page

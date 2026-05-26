@@ -10,6 +10,7 @@ const frameAncestors = process.env.FRAME_ANCESTORS || '';
 const geoProvider = (process.env.GEOIP_PROVIDER || 'ipapi').toLowerCase();
 const dashdotUrl = (process.env.DASHDOT_URL || 'http://dashdot:3001').replace(/\/+$/, '');
 const dashdotTimeoutMs = Number(process.env.DASHDOT_TIMEOUT_MS || 5000);
+const widgetPublicBaseUrl = (process.env.WIDGET_PUBLIC_BASE_URL || `http://homarr-iframes:${port}`).replace(/\/+$/, '');
 const isProduction = process.env.NODE_ENV === 'production';
 const geoCache = new Map();
 const logPrefix = '[homarr-iframes]';
@@ -316,9 +317,10 @@ const server = createServer(async (req, res) => {
 
 server.listen(port, () => {
   console.log(`${logPrefix} listening on 0.0.0.0:${port}`);
-  console.log(`${logPrefix} internal URLs:`);
-  console.log(`  http://homarr-iframes:${port}/ping/`);
-  console.log(`  http://homarr-iframes:${port}/debug/`);
-  console.log(`  http://homarr-iframes:${port}/widgets/dashdot/`);
-  console.log(`  http://homarr-iframes:${port}/widgets/daylight/`);
+  console.log(`${logPrefix} browser URLs:`);
+  console.log(`  ${widgetPublicBaseUrl}/ping/`);
+  console.log(`  ${widgetPublicBaseUrl}/debug/`);
+  console.log(`  ${widgetPublicBaseUrl}/widgets/dashdot/`);
+  console.log(`  ${widgetPublicBaseUrl}/widgets/daylight/`);
+  console.log(`${logPrefix} Docker service URL: http://homarr-iframes:${port}/`);
 });
