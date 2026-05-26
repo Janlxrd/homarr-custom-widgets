@@ -20,7 +20,7 @@ services:
   homarr-iframes:
     build: .
     ports:
-      - "${WIDGET_BIND_IP}:8091:8080"
+      - "${WIDGET_BIND_IP}:8096:8080"
     networks:
       - services
 ```
@@ -32,10 +32,10 @@ cp .env.example .env
 nano .env
 ```
 
-Set `WIDGET_BIND_IP` to the VPS private/LAN/Tailscale IP, for example:
+Set `WIDGET_BIND_IP` to the VPS private/LAN/Tailscale IP:
 
 ```text
-WIDGET_BIND_IP=192.168.1.50
+WIDGET_BIND_IP=10.0.0.175
 ```
 
 Start it with:
@@ -55,22 +55,21 @@ http://dashdot:3001
 Use the private host IP URLs in Homarr:
 
 ```text
-http://192.168.1.50:8091/ping/
-http://192.168.1.50:8091/debug/
-http://192.168.1.50:8091/widgets/daylight/
-http://192.168.1.50:8091/widgets/dashdot/
+http://10.0.0.175:8096/ping/
+http://10.0.0.175:8096/debug/
+http://10.0.0.175:8096/widgets/daylight/
+http://10.0.0.175:8096/widgets/dashdot/
 ```
 
-Replace `192.168.1.50` with your actual private IP. This project does not use
-a base path or path rewrite.
+This project does not use a base path or path rewrite.
 
 If Homarr shows a blank iframe, test in this order:
 
 ```text
-http://192.168.1.50:8091/ping/
-http://192.168.1.50:8091/debug/
-http://192.168.1.50:8091/widgets/dashdot/?demo=1
-http://192.168.1.50:8091/widgets/dashdot/?debug=1
+http://10.0.0.175:8096/ping/
+http://10.0.0.175:8096/debug/
+http://10.0.0.175:8096/widgets/dashdot/?demo=1
+http://10.0.0.175:8096/widgets/dashdot/?debug=1
 ```
 
 `/ping/` uses no JavaScript. If that is blank inside Homarr, the iframe page

@@ -8,9 +8,9 @@ services:
       FRAME_ANCESTORS: ""
       GEOIP_PROVIDER: "ipapi"
       DASHDOT_URL: "http://dashdot:3001"
-      WIDGET_PUBLIC_BASE_URL: "http://${WIDGET_BIND_IP}:8091"
+      WIDGET_PUBLIC_BASE_URL: "http://${WIDGET_BIND_IP}:8096"
     ports:
-      - "${WIDGET_BIND_IP:?Set WIDGET_BIND_IP in .env to your private VPS IP}:8091:8080"
+      - "${WIDGET_BIND_IP:?Set WIDGET_BIND_IP in .env to your private VPS IP}:8096:8080"
     healthcheck:
       test:
         - CMD
