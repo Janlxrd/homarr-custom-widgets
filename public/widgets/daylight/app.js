@@ -11,6 +11,7 @@ const requestedTimezone = params.get('tz');
 const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
 const timezone = requestedTimezone || browserTimezone;
 const logPrefix = '[homarr-iframes:daylight]';
+const appBasePath = getAppBasePath('/widgets/daylight/');
 
 const state = {
   coords: null,
@@ -43,6 +44,7 @@ console.info(`${logPrefix} loaded`, {
   origin: window.location.origin,
   pathname: window.location.pathname,
   search: window.location.search,
+  appBasePath,
   timezone
 });
 
@@ -125,13 +127,19 @@ function getFixedLocation() {
 
 async function getServerGeoIp() {
   try {
-    const response = await fetch('/api/geoip', { cache: 'no-store' });
+    const response = await fetch(`${appBasePath}/api/geoip`, { cache: 'no-store' });
     if (!response.ok) return null;
     const data = await response.json();
     return normalizeGeoPayload(data, 'server IP estimate');
   } catch {
     return null;
   }
+}
+
+function getAppBasePath(marker) {
+  const index = window.location.pathname.indexOf(marker);
+  if (index <= 0) return '';
+  return window.location.pathname.slice(0, index).replace(/\/+$/, '');
 }
 
 async function getBrowserIpLocation() {

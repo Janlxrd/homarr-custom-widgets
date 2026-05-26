@@ -1,6 +1,7 @@
 const rows = document.querySelector('#rows');
 const origin = window.location.origin;
 const logPrefix = '[homarr-iframes:debug]';
+const appBasePath = getAppBasePath('/debug/');
 
 window.addEventListener('error', (event) => {
   add('JavaScript error', event.message || 'Unknown script error', false);
@@ -22,18 +23,19 @@ async function run() {
   console.info(`${logPrefix} loaded`, {
     origin,
     pathname: window.location.pathname,
-    search: window.location.search
+    search: window.location.search,
+    appBasePath
   });
 
   add('JavaScript loaded', 'yes', true);
   add('Current origin', origin, true);
-  add('Ping URL', `${origin}/ping/`, true);
-  add('Dashdot widget URL', `${origin}/widgets/dashdot/`, true);
-  add('Daylight widget URL', `${origin}/widgets/daylight/`, true);
+  add('Ping URL', `${origin}${appBasePath}/ping/`, true);
+  add('Dashdot widget URL', `${origin}${appBasePath}/widgets/dashdot/`, true);
+  add('Daylight widget URL', `${origin}${appBasePath}/widgets/daylight/`, true);
 
-  await check('No-JS ping page', '/ping/');
-  await check('Health endpoint', '/healthz');
-  await check('Dashdot summary endpoint', '/api/dashdot/summary');
+  await check('No-JS ping page', `${appBasePath}/ping/`);
+  await check('Health endpoint', `${appBasePath}/healthz`);
+  await check('Dashdot summary endpoint', `${appBasePath}/api/dashdot/summary`);
 }
 
 async function check(label, url) {
@@ -66,4 +68,10 @@ function add(label, value, ok) {
   code.textContent = value;
   row.append(title, code);
   rows.append(row);
+}
+
+function getAppBasePath(marker) {
+  const index = window.location.pathname.indexOf(marker);
+  if (index <= 0) return '';
+  return window.location.pathname.slice(0, index).replace(/\/+$/, '');
 }

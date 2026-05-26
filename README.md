@@ -12,30 +12,17 @@ Custom iframe widgets for Homarr, built as a small internal Docker service.
 
 ## Docker
 
-`docker-compose.yml` publishes the widget service only on the private host IP
-you set in `.env`:
+`docker-compose.yml` keeps the widget service internal to Docker and exposes
+it only to containers on the `services` network:
 
 ```yaml
 services:
   homarr-iframes:
     build: .
-    ports:
-      - "${WIDGET_BIND_IP}:8096:8080"
+    expose:
+      - "8080"
     networks:
       - services
-```
-
-Create `.env` on the VPS:
-
-```bash
-cp .env.example .env
-nano .env
-```
-
-Set `WIDGET_BIND_IP` to the VPS private/LAN/Tailscale IP:
-
-```text
-WIDGET_BIND_IP=10.0.0.175
 ```
 
 Start it with:
@@ -52,24 +39,34 @@ http://dashdot:3001
 
 ## Homarr iFrame URLs
 
-Use the private host IP URLs in Homarr:
+Route the widget service through the existing Cloudflare Tunnel for
+`home.janiqwa.dev`:
 
 ```text
-http://10.0.0.175:8096/ping/
-http://10.0.0.175:8096/debug/
-http://10.0.0.175:8096/widgets/daylight/
-http://10.0.0.175:8096/widgets/dashdot/
+Hostname: home.janiqwa.dev
+Path: /iframes/.*
+Service: http://homarr-iframes:8080
 ```
 
-This project does not use a base path or path rewrite.
+Then use these URLs in Homarr:
+
+```text
+https://home.janiqwa.dev/iframes/ping/
+https://home.janiqwa.dev/iframes/debug/
+https://home.janiqwa.dev/iframes/widgets/daylight/
+https://home.janiqwa.dev/iframes/widgets/dashdot/
+```
+
+The app is configured with `BASE_PATH=/iframes`, so API calls and static files
+work under that tunnel path.
 
 If Homarr shows a blank iframe, test in this order:
 
 ```text
-http://10.0.0.175:8096/ping/
-http://10.0.0.175:8096/debug/
-http://10.0.0.175:8096/widgets/dashdot/?demo=1
-http://10.0.0.175:8096/widgets/dashdot/?debug=1
+https://home.janiqwa.dev/iframes/ping/
+https://home.janiqwa.dev/iframes/debug/
+https://home.janiqwa.dev/iframes/widgets/dashdot/?demo=1
+https://home.janiqwa.dev/iframes/widgets/dashdot/?debug=1
 ```
 
 `/ping/` uses no JavaScript. If that is blank inside Homarr, the iframe page

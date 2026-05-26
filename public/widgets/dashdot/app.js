@@ -5,6 +5,7 @@ const baseWidth = clampNumber(params.get('baseWidth'), 320, 1200, 574);
 const baseHeight = clampNumber(params.get('baseHeight'), 240, 1200, 574);
 const demoMode = params.get('demo') === '1';
 const logPrefix = '[homarr-iframes:dashdot]';
+const appBasePath = getAppBasePath('/widgets/dashdot/');
 
 const state = {
   cpuHistory: [],
@@ -29,6 +30,7 @@ console.info(`${logPrefix} loaded`, {
   origin: window.location.origin,
   pathname: window.location.pathname,
   search: window.location.search,
+  appBasePath,
   demoMode
 });
 
@@ -81,7 +83,7 @@ async function refresh() {
 }
 
 async function fetchSummary() {
-  const response = await fetch('/api/dashdot/summary', { cache: 'no-store' });
+  const response = await fetch(`${appBasePath}/api/dashdot/summary`, { cache: 'no-store' });
   if (!response.ok) {
     const detail = await response.json().catch(() => ({}));
     console.error(`${logPrefix} /api/dashdot/summary failed`, {
@@ -100,6 +102,12 @@ async function fetchSummary() {
     console.warn(`${logPrefix} Partial Dashdot data`, payload.errors);
   }
   return payload;
+}
+
+function getAppBasePath(marker) {
+  const index = window.location.pathname.indexOf(marker);
+  if (index <= 0) return '';
+  return window.location.pathname.slice(0, index).replace(/\/+$/, '');
 }
 
 function render(payload, error = null) {

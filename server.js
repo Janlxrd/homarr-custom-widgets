@@ -10,7 +10,8 @@ const frameAncestors = process.env.FRAME_ANCESTORS || '';
 const geoProvider = (process.env.GEOIP_PROVIDER || 'ipapi').toLowerCase();
 const dashdotUrl = (process.env.DASHDOT_URL || 'http://dashdot:3001').replace(/\/+$/, '');
 const dashdotTimeoutMs = Number(process.env.DASHDOT_TIMEOUT_MS || 5000);
-const widgetPublicBaseUrl = (process.env.WIDGET_PUBLIC_BASE_URL || `http://homarr-iframes:${port}`).replace(/\/+$/, '');
+const basePath = normalizeBasePath(process.env.BASE_PATH || '');
+const widgetPublicBaseUrl = (process.env.WIDGET_PUBLIC_BASE_URL || `http://homarr-iframes:${port}${basePath}`).replace(/\/+$/, '');
 const isProduction = process.env.NODE_ENV === 'production';
 const geoCache = new Map();
 const logPrefix = '[homarr-iframes]';
@@ -63,6 +64,18 @@ function sendJson(res, statusCode, payload) {
     'Content-Type': 'application/json; charset=utf-8',
     'Cache-Control': 'no-store'
   });
+}
+
+function normalizeBasePath(value) {
+  const trimmed = value.trim().replace(/^\/+|\/+$/g, '');
+  return trimmed ? `/${trimmed}` : '';
+}
+
+function stripBasePath(pathname) {
+  if (!basePath) return pathname;
+  if (pathname === basePath) return '/';
+  if (pathname.startsWith(`${basePath}/`)) return pathname.slice(basePath.length);
+  return pathname;
 }
 
 async function fetchJson(url, timeoutMs = 5000) {
@@ -255,7 +268,7 @@ async function handleDashdotSummary(res) {
 }
 
 async function serveStatic(req, res, requestUrl) {
-  let pathname = decodeURIComponent(requestUrl.pathname);
+  let pathname = stripBasePath(decodeURIComponent(requestUrl.pathname));
 
   if (pathname === '/') {
     pathname = '/widgets/daylight/';
@@ -295,7 +308,7 @@ async function serveStatic(req, res, requestUrl) {
 
 const server = createServer(async (req, res) => {
   const requestUrl = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`);
-  const pathname = requestUrl.pathname;
+  const pathname = stripBasePath(requestUrl.pathname);
 
   if (pathname === '/healthz') {
     sendJson(res, 200, { ok: true });
@@ -317,6 +330,9 @@ const server = createServer(async (req, res) => {
 
 server.listen(port, () => {
   console.log(`${logPrefix} listening on 0.0.0.0:${port}`);
+  if (basePath) {
+    console.log(`${logPrefix} base path: ${basePath}`);
+  }
   console.log(`${logPrefix} browser URLs:`);
   console.log(`  ${widgetPublicBaseUrl}/ping/`);
   console.log(`  ${widgetPublicBaseUrl}/debug/`);
