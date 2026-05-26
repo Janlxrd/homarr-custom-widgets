@@ -10,8 +10,8 @@ Custom iframe widgets for Homarr, built as a small internal Docker service.
 
 ## Docker
 
-The example Compose file keeps the service internal to the Docker network and
-does not publish ports externally:
+`docker-compose.yml` keeps the service internal to the Docker network and does
+not publish ports externally:
 
 ```yaml
 services:
@@ -21,6 +21,12 @@ services:
       - "8080"
     networks:
       - services
+```
+
+Start it with:
+
+```bash
+docker compose up -d --build
 ```
 
 Dashdot is expected on the same Docker network at:
