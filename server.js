@@ -186,23 +186,50 @@ async function handleGeoIp(req, res) {
 
 async function handleDashdotSummary(res) {
   try {
-    const [info, cpu, storage, ram, network] = await Promise.all([
-      fetchJson(`${dashdotUrl}/info`, dashdotTimeoutMs).catch((error) => ({ error: error.message })),
-      fetchJson(`${dashdotUrl}/load/cpu`, dashdotTimeoutMs).catch((error) => ({ error: error.message })),
-      fetchJson(`${dashdotUrl}/load/storage`, dashdotTimeoutMs).catch((error) => ({ error: error.message })),
-      fetchJson(`${dashdotUrl}/load/ram`, dashdotTimeoutMs).catch((error) => ({ error: error.message })),
-      fetchJson(`${dashdotUrl}/load/network`, dashdotTimeoutMs).catch((error) => ({ error: error.message }))
-    ]);
+    const endpoints = {
+      info: `${dashdotUrl}/info`,
+      cpu: `${dashdotUrl}/load/cpu`,
+      storage: `${dashdotUrl}/load/storage`,
+      ram: `${dashdotUrl}/load/ram`,
+      network: `${dashdotUrl}/load/network`
+    };
+    const entries = await Promise.all(
+      Object.entries(endpoints).map(async ([name, url]) => {
+        try {
+          return [name, { ok: true, data: await fetchJson(url, dashdotTimeoutMs) }];
+        } catch (error) {
+          return [name, { ok: false, error: error instanceof Error ? error.message : String(error) }];
+        }
+      })
+    );
+    const results = Object.fromEntries(entries);
+    const errors = Object.fromEntries(
+      Object.entries(results)
+        .filter(([, result]) => !result.ok)
+        .map(([name, result]) => [name, result.error])
+    );
+    const okCount = Object.values(results).filter((result) => result.ok).length;
+
+    if (okCount === 0) {
+      sendJson(res, 502, {
+        error: 'Dashdot is unreachable from the widget server.',
+        source: dashdotUrl,
+        errors
+      });
+      return;
+    }
 
     sendJson(res, 200, {
+      ok: Object.keys(errors).length === 0,
       source: dashdotUrl,
       fetchedAt: new Date().toISOString(),
-      info,
+      errors,
+      info: results.info.data ?? {},
       loads: {
-        cpu,
-        storage,
-        ram,
-        network
+        cpu: results.cpu.data ?? {},
+        storage: results.storage.data ?? {},
+        ram: results.ram.data ?? {},
+        network: results.network.data ?? {}
       }
     });
   } catch (error) {

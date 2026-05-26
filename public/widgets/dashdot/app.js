@@ -66,10 +66,17 @@ async function refresh() {
 async function fetchSummary() {
   const response = await fetch('/api/dashdot/summary', { cache: 'no-store' });
   if (!response.ok) {
-    throw new Error(`Dashdot API returned ${response.status}`);
+    const detail = await response.json().catch(() => ({}));
+    throw new Error(detail.error || `Dashdot API returned ${response.status}`);
   }
 
-  return response.json();
+  const payload = await response.json();
+  if (payload.ok === false && payload.errors && Object.keys(payload.errors).length > 0) {
+    payload.warning = Object.entries(payload.errors)
+      .map(([key, value]) => `${key}: ${value}`)
+      .join('; ');
+  }
+  return payload;
 }
 
 function render(payload, error = null) {
@@ -99,6 +106,8 @@ function render(payload, error = null) {
   elements.cpuLine.setAttribute('d', historyPath(state.cpuHistory));
   elements.statusText.textContent = error
     ? `Using cached/demo data: ${error.message}`
+    : payload.warning
+      ? `Partial Dashdot data: ${payload.warning}`
     : `Updated ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
 }
 
